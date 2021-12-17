@@ -23,6 +23,30 @@
                     <input type="submit" name="submit">
                 </div>
             </form>
+
+            <br><br><br><br><br>
+
+            <form action="gini.php" method="POST" enctype="multipart/form-data">
+                <div>Gini</div>
+                <div style="margin: 5% 0">
+                    <input type="file" name="file">
+                </div>
+                <div>
+                    <input type="submit" name="submit">
+                </div>
+            </form>
+
+            <br><br><br><br><br>
+
+            <form action="entropy.php" method="POST" enctype="multipart/form-data">
+                <div>Entropy</div>
+                <div style="margin: 5% 0">
+                    <input type="file" name="file">
+                </div>
+                <div>
+                    <input type="submit" name="submit">
+                </div>
+            </form>
         </div>
     </body>
 </html>
