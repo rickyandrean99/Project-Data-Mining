@@ -1,11 +1,11 @@
-Kode;Feat 1;Feat 2;Feat 3;Class
-1;Ya;Merah;Segitiga;C0
-2;Ya;Hijau;Lingkaran;C1
-3;Ya;Biru;Persegi;C1
-4;Ya;Hijau;Persegi;C0
-5;Ya;Merah;Lingkaran;C1
-6;Tidak;Hijau;Segitiga;C1
-7;Tidak;Merah;Persegi;C0
-8;Tidak;Biru;Lingkaran;C0
-9;Tidak;Biru;Lingkaran;C0
-10;Tidak;Merah;Segitiga;C0
+﻿Kode;Feat 1;Feat 2;Feat 3; Feat 4;Class
+1;Ya;1;Segitiga;3;C0
+2;Ya;6;Lingkaran;6;C1
+3;Ya;5;Persegi;7;C1
+4;Ya;4;Persegi;1;C0
+5;Ya;7;Lingkaran;7;C1
+6;Tidak;3;Segitiga;9;C1
+7;Tidak;8;Persegi;10;C0
+8;Tidak;7;Lingkaran;1;C0
+9;Tidak;5;Lingkaran;3;C0
+10;Tidak;9;Segitiga;6;C0

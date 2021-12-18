@@ -128,7 +128,7 @@
                             <tbody>
                                 <?php foreach ($val as $key => $value) { ?>
                                     <tr>
-                                        <td style='padding: 5px 25px; border: 1px solid black;' class="text-center"><?php echo $baris[$key]; ?></td>
+                                        <td class='fw-bold' style='padding: 5px 25px; border: 1px solid black;' class="text-center"><?php echo $baris[$key]; ?></td>
                                         <?php foreach ($value as $key2 => $value2) { ?>
                                             <td style='padding: 5px 25px; border: 1px solid black;' class="text-center"><?php echo $value2; ?></td>
                                         <?php } ?>

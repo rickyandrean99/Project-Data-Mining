@@ -67,6 +67,7 @@
 
         $entropy_parent = -$entropy_parent;
         
+        // ========================================================================= START CATEGORICAL =====================================================================
         // Pemetaan tabel per feature
         $value_group_list = [];
         for ($i = 0; $i < count($nilai_matriks[0]); $i++) {
@@ -74,21 +75,28 @@
             array_push($value_group_list, array_count_values($column_group));
         }
 
+        // print_r($nilai_matriks);
+        // die();
+
         $feat_data = [];
         foreach ($attribut as $key => $value) {
             // ambil key sebagai patokan 0, 1, 2, ... unuk menentukan feat mana yang diproses
-
+            
             $feat_row = [];
             foreach ($parent as $key2 => $value2) {
                 // ambil key 2 sebagai patokan seperti C0 atau C1 yang merupakan row dari tabel yang akan dibuat
-
+                
                 $feat_column = [];
                 foreach ($value_group_list[$key] as $key3 => $value3) {
                     // ambil key 3 sebagai daftar patokan seperti Ya, Tidak, dll yang merupakan column dari tabel yang akan dibuat
-
+                    
                     $amount = 0;
                     foreach (array_column($nilai_matriks, $key) as $key4 => $value4) {
                         // Looping array nilai matriks pada kolom ke $key, lakukan pengecekan sebagai berikut dimana $value4(nilai pada cell dataset) harus sesuai dengan nilai $key3(daftar data categorical seperti ya, tidak) dan juga class pada row tersebut ($class[$key4]) harus sama dengan row pada tabel yang dibuat sekarang yaitu $key2
+                        
+                        // jika datanya numerik tidak perlu diproses karena prosesnya akan beda 
+                        if (is_numeric($value4)) break 3;
+                        
                         if ($value4 == $key3 && $class[$key4] == $key2) {
                             $amount++;
                         }
@@ -99,15 +107,20 @@
                 
                 $feat_row[$key2] = $feat_column;
             }
-
-            array_push($feat_data, $feat_row);
+            
+            if (count($feat_row) > 0) $feat_data[$key] = $feat_row;
         }
 
+        // UPDATE: FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
+        // print_r($feat_data);
+        // die();
+        
         // Menentukan probability di tiap feature
         $prob_feat = [];
         foreach ($attribut as $key => $value) {
+            if (!isset($feat_data[$key])) continue;
+            
             $prob_row = [];
-
             foreach ($feat_data[$key] as $key2 => $value2) {
                 $prob_column = [];
 
@@ -120,6 +133,10 @@
 
             $prob_feat[$key] = $prob_row;
         }
+
+        // UPDATE: PROBABILITY FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
+        // print_r($prob_feat);
+        // die();
 
         // Menentukan entropy di tiap feature
         $entropy_feat = [];
@@ -141,6 +158,10 @@
             $entropy_feat[$key] = $entropy_list;
         }
 
+        // UPDATE: ENTROPY FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
+        // print_r($entropy_feat);
+        // die();
+
         // Menentukan weight di tiap feature
         $weight_list = [];
         foreach ($entropy_feat as $key => $value) {
@@ -152,17 +173,32 @@
             $weight_list[$key] = $weight;
         }
 
+        // UPDATE: WEIGHT FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
+        // print_r($weight_list);
+        // die();
+
         // Menentukan gain di tiap feature
         $gain_list = [];
         foreach ($weight_list as $key => $value) {
             $gain_list[$key] = $entropy_parent - $value;
         }
-
         arsort($gain_list);
 
-        // Tabel
+        // UPDATE: GAIN FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
+        // print_r($gain_list);
+        // die();
+        // ========================================================================= END CATEGORICAL =====================================================================
+
+        // ========================================================================= START KONTINU =====================================================================
+        
+        
+        // ========================================================================= START KONTINU =====================================================================
+
+        // Tabel untuk data categorical
         echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
         foreach ($attribut as $key => $value) {
+            if (!isset($feat_data[$key])) continue;
+
             echo "<div style='margin-right: 40px; margin-bottom: 20px'>";
                 echo "<table style='border: 1px solid black; border-collapse: collapse'>";
                     echo "<caption>".$attribut[$key]."</caption>";
