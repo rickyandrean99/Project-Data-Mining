@@ -102,54 +102,6 @@
 
             array_push($feat_data, $feat_row);
         }
-        
-        echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
-        foreach ($attribut as $key => $value) {
-            echo "<div style='margin-right: 20px; margin-bottom: 20px'>";
-                echo "<table style='border: 1px solid black; border-collapse: collapse'>";
-                    echo "<caption>".$attribut[$key]."</caption>";
-                    echo "<thead>";
-                        echo "<tr>";
-                            echo "<th style='padding: 5px 25px; border: 1px solid black;'></th>";
-
-                            foreach ($value_group_list[$key] as $key2 => $value2) {
-                                echo "<th style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key2."</th>";
-                            }
-                            
-                            echo "<th style='padding: 5px 25px; background: black'></th>";
-                        echo "</tr>";
-                    echo "</thead>";
-
-                    echo "<tbody>";
-                        foreach ($feat_data[$key] as $key3 => $value3) {
-                            echo "<tr>";
-                                echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key3."</td>";
-
-                                foreach ($value3 as $key4 => $value4) {
-                                    echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value4."</td>";
-                                }
-
-                                echo "<td style='padding: 5px 25px; background: black'></td>";
-                            echo "</tr>";
-                        }
-
-                        echo "<tr>";
-                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center; font-weight: bold'>Total</td>";
-
-                            $total = 0;
-                            foreach ($value_group_list[$key] as $key5 => $value5) {
-                                echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value5."</td>";
-                                $total += $value5;
-                            }
-                            
-                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$total."</td>";
-                        echo "</tr>";
-                    echo "</tbody>";
-                echo "</table>";
-            echo "</div>";
-        }
-
-        echo "</div>";
 
         // Menentukan probability di tiap feature
         $prob_feat = [];
@@ -211,13 +163,12 @@
         // Tabel
         echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
         foreach ($attribut as $key => $value) {
-            echo "<div style='margin-right: 20px; margin-bottom: 20px'>";
+            echo "<div style='margin-right: 40px; margin-bottom: 20px'>";
                 echo "<table style='border: 1px solid black; border-collapse: collapse'>";
                     echo "<caption>".$attribut[$key]."</caption>";
                     echo "<thead>";
                         echo "<tr>";
                             echo "<th style='padding: 5px 25px; border: 1px solid black;'></th>";
-
                             foreach ($value_group_list[$key] as $key2 => $value2) {
                                 echo "<th style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key2."</th>";
                             }
@@ -225,81 +176,60 @@
                     echo "</thead>";
 
                     echo "<tbody>";
+                        foreach ($feat_data[$key] as $key3 => $value3) {
+                            echo "<tr>";
+                                echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key3."</td>";
+                                foreach ($value3 as $key4 => $value4) {
+                                    echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value4."</td>";
+                                }
+                            echo "</tr>";
+                        }
+
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center; font-weight: bold'>Total</td>";
+                            foreach ($value_group_list[$key] as $key5 => $value5) {
+                                echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value5."</td>";
+                            }
+                        echo "</tr>";
+
                         foreach ($prob_feat[$key] as $key3 => $value3) {
                             echo "<tr>";
                                 echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>P(".$key3.")</td>";
-
                                 foreach ($value3 as $key4 => $value4) {
                                     echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".round($value4, 3)."</td>";
                                 }
                             echo "</tr>";
                         }
 
+                        // Entropy
                         echo "<tr>";
                             echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>Entropy</td>";
-
                             foreach ($entropy_feat[$key] as $key5 => $value5) {
                                 echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".round($value5, 3)."</td>";
                             }
                         echo "</tr>";
 
+                        // Weight
                         echo "<tr>";
                             echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>Weight</td>";
-
-                            echo "<td colspan='".count($attribut)."' style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".round($weight_list[$key], 3)."</td>";
+                            echo "<td colspan='".count($value_group_list[$key])."'style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".round($weight_list[$key], 3)."</td>";
                         echo "</tr>";
 
+                        // Gain
                         echo "<tr>";
                             echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>Gain</td>";
-
-                            echo "<td colspan='".count($attribut)."' style='padding: 5px 25px; border: 1px solid black; text-align: center;'><b>".round($gain_list[$key], 3)."</b></td>";
+                            echo "<td colspan='".count($value_group_list[$key])."'style='padding: 5px 25px; border: 1px solid black; text-align: center;'><b>".round($gain_list[$key], 3)."</b></td>";
                         echo "</tr>";
-
                     echo "</tbody>";
                 echo "</table>";
             echo "</div>";
-        } 
-        echo "</div>";
+        }
 
+        echo "</div>";
 
         // Hasil
         echo "<div style='font-size: 18px'>Best split terbaik adalah attribut <b>".$attribut[key($gain_list)]."</b> karena memiliki gain terbesar.</div>";
-
-        // Start: readable data
-        // $attribut_list = '';
-        // $baris_list = '';
-        // $nilai_list = '';
-        // $class_list = '';
-
-        // foreach ($attribut as $key => $value) {
-        //     $attribut_list .= $value;
-        //     if ($key != count($attribut) - 1) $attribut_list .= ", ";
-        // }
-
-        // foreach ($baris as $key => $value) {
-        //     $baris_list .= $value;
-        //     if ($key != count($baris) - 1) $baris_list .= ", ";
-        // }
-        
-        // foreach ($nilai_matriks as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         $nilai_list .= $value2;
-        //         if ($key2 != count($value) - 1) $nilai_list .= ", ";
-        //     }
-        //     $nilai_list .= "<br>";
-        // }
-
-        // foreach ($class as $key => $value) {
-        //     $class_list .= $value;
-        //     if ($key != count($class) - 1) $class_list .= ", ";
-        // }
-
-        // echo "<div style='font-size: 16px'>";
-        //     echo "<p><b>Attribut list:</b><br>".$attribut_list."</p>";
-        //     echo "<p><b>Baris list:</b><br>".$baris_list."</p>";
-        //     echo "<p><b>Nilai list:</b><br>".$nilai_list."</p>";
-        //     echo "<p><b>Class List:</b><br>".$class_list."</p>";
-        // echo "</div>";
-        // End: readable data
+    } else {
+        header("location: index.php");
     }
 ?>

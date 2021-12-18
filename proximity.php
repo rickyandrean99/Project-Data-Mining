@@ -127,5 +127,7 @@
         echo "</div>";
 
         echo "</div>";
+    } else {
+        header("location: index.php");
     }
 ?>

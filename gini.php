@@ -57,5 +57,7 @@
             $prob = $value/array_sum($class);
             echo $prob.' ';
         }
+    } else {
+        header("location: index.php");
     }
 ?>
