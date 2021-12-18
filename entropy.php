@@ -70,76 +70,87 @@
         // Pemetaan tabel per feature
         $value_group_list = [];
         for ($i = 0; $i < count($nilai_matriks[0]); $i++) {
-            $ppp = array_column($nilai_matriks, $i);
-            array_push($value_group_list, array_count_values($ppp));
+            $column_group = array_column($nilai_matriks, $i);
+            array_push($value_group_list, array_count_values($column_group));
         }
-
-        // print_r($value_group_list);
-        // die();
 
         $feat_data = [];
         foreach ($attribut as $key => $value) {
-            // ambil key sebagai patokan 0, 1, 2, ...
+            // ambil key sebagai patokan 0, 1, 2, ... unuk menentukan feat mana yang diproses
 
             $feat_row = [];
             foreach ($parent as $key2 => $value2) {
-                // ambil key 2 sebagai patokan C0 atau C1
+                // ambil key 2 sebagai patokan seperti C0 atau C1 yang merupakan row dari tabel yang akan dibuat
 
                 $feat_column = [];
                 foreach ($value_group_list[$key] as $key3 => $value3) {
-                    // ambil key 3 sebagai daftar patokan Ya, Tidak
+                    // ambil key 3 sebagai daftar patokan seperti Ya, Tidak, dll yang merupakan column dari tabel yang akan dibuat
 
                     $amount = 0;
                     foreach (array_column($nilai_matriks, $key) as $key4 => $value4) {
+                        // Looping array nilai matriks pada kolom ke $key, lakukan pengecekan sebagai berikut dimana $value4(nilai pada cell dataset) harus sesuai dengan nilai $key3(daftar data categorical seperti ya, tidak) dan juga class pada row tersebut ($class[$key4]) harus sama dengan row pada tabel yang dibuat sekarang yaitu $key2
                         if ($value4 == $key3 && $class[$key4] == $key2) {
                             $amount++;
                         }
                     }
-                        
-                    array_push($feat_column, $amount);
+                    
+                    $feat_column[$key3] = $amount;
                 }
                 
-                array_push($feat_row, $feat_column);
+                $feat_row[$key2] = $feat_column;
             }
 
             array_push($feat_data, $feat_row);
-            
+        }
+
+        // foreach ($feat_data as $key => $value) {
+        //     print_r($value);
+        //     echo "<br>";
+        // }
+
+        // print_r($feat_data);
+        // die();
+        
+        foreach ($attribut as $key => $value) {
+            echo "<table style='border: 1px solid black; border-collapse: collapse'>";
+                echo "<thead>";
+                    echo "<tr>";
+                        echo "<th style='padding: 5px 25px; border: 1px solid black;'></th>";
+
+                        foreach ($value_group_list[$key] as $key2 => $value2) {
+                            echo "<th style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key2."</th>";
+                        }
+                        
+                        echo "<th style='padding: 5px 25px; border: 1px solid black;'></th>";
+                    echo "</tr>";
+                echo "</thead>";
+
+                echo "<tbody>";
+                    foreach ($feat_data[$key] as $key3 => $value3) {
+                        echo "<tr>";
+                        echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key3."</td>";
+
+                        foreach ($value3 as $key4 => $value4) {
+                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value4."</td>";
+                        }
+                        
+                        echo "</tr>";
+                    }
+
+                    echo "<tr>";
+                    
+                    echo "</tr>";
+                echo "</tbody>";
+            echo "<table>";
+
+            die();
         }
         
-        // print_r($feat_data);
-
-        foreach ($feat_data as $key => $value) {
-            print_r($value);
-            echo "<br>";
-        }
-
-        echo "<br>";
-
-        foreach ($value_group_list as $key => $value) {
-            print_r($value);
-            echo "<br>";
-        }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
+        echo "</table>";
 
 
 
@@ -152,7 +163,6 @@
         $class_list = '';
 
         foreach ($attribut as $key => $value) {
-            if ($key == 0) continue;
             $attribut_list .= $value;
             if ($key != count($attribut) - 1) $attribut_list .= ", ";
         }
