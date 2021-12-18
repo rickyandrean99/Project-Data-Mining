@@ -102,14 +102,6 @@
 
             array_push($feat_data, $feat_row);
         }
-
-        // foreach ($feat_data as $key => $value) {
-        //     print_r($value);
-        //     echo "<br>";
-        // }
-
-        // print_r($feat_data);
-        // die();
         
         foreach ($attribut as $key => $value) {
             echo "<table style='border: 1px solid black; border-collapse: collapse'>";
@@ -155,11 +147,77 @@
             echo "<br><br>";
         }
 
-        // probability
         // entropy per group
         // M atau weight gabungan dari entropy per group
         // Gain
-        $prob
+        // print_r($feat_data);
+        $prob_feat = [];
+        foreach ($attribut as $key => $value) {
+            $prob_row = [];
+
+            foreach ($feat_data[$key] as $key2 => $value2) {
+                $prob_column = [];
+
+                foreach ($value2 as $key3 => $value3) {
+                    $prob_column[$key3] = $value3 / $value_group_list[$key][$key3];
+                }
+
+                $prob_row[$key2] = $prob_column;
+            }
+
+            $prob_feat[$key] = $prob_row;
+        }
+        
+        // foreach ($prob_feat as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+        // die();
+
+        
+        // die();
+
+        $entropy_feat = [];
+        foreach ($prob_feat as $key => $value) {
+            if ($key == 0) continue; // ini hapus
+            $entropy_list = [];
+            foreach ($value_group_list[$key] as $key2 => $value2) {
+                $entropy = 0;
+
+                // if ($key2 == 0) continue; // ini hapus
+                print_r(array_column($value, $key2));
+                // die();
+
+                // foreach (array_column($value, $key2) as $key3 => $value3) {
+                //     $entropy += $value3 * log($value3, 2);
+                // }
+                // echo -$entropy."<br>";
+                // $entropy_list[$key2] = -$entropy;
+            }
+
+            die(); // ini hapus
+
+            echo "<br>";
+            $entropy_feat[$key] = $entropy_list;
+        }
+        // print_r($entropy_feat);
+        die();
+        
+        // foreach ($value_group_list as $key => $value) {
+        //     print_r($value);
+        //     echo "<br>";
+        // }
+        // die();
+
+
+
+
+
+
+
 
 
 
