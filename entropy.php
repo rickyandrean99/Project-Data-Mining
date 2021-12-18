@@ -190,10 +190,69 @@
         // ========================================================================= END CATEGORICAL =====================================================================
 
         // ========================================================================= START KONTINU =====================================================================
-        
-        
-        // ========================================================================= START KONTINU =====================================================================
+        // Mendapatkan data kontinu
+        $data_kontinu = [];
+        foreach ($attribut as $key => $value) {
+            if (!(is_numeric($nilai_matriks[0][$key]))) continue;
+            $data_kontinu[$key] = array_column($nilai_matriks, $key);
+        }
 
+        // Membuat data dengan nilai yang sama hanya berjumlah 1 elemen
+        $data_kontinu_unique = [];
+        foreach ($data_kontinu as $key => $value) {
+            asort($value);
+            $data_kontinu_unique[$key] = array_unique($value);
+        }
+
+        // Pemetaan angka baru berdasarkan data kontinu yang sudah diurutkan
+        $new_data_kontinu = [];
+        foreach ($data_kontinu_unique as $key => $value) {
+            $new = [];
+            array_push($new, reset($value)-1);
+            
+            foreach ($value as $key2 => $value2) {
+                foreach ($value as $key3 => $value3) {
+                    if ($value3 > $value2) {
+                        array_push($new, (($value2 + $value3)/2));
+                        break;
+                    }
+                }
+            }
+            
+            array_push($new, end($value)+1);
+            $new_data_kontinu[$key] = $new;
+        }
+
+        // Feat data
+        $kontinu_feat_data = [];
+        foreach($new_data_kontinu as $key => $value) {
+            $kontinu_feat_group = [];
+            foreach ($parent as $key2 => $value2) {
+                $kontinu_feat_row = [];
+                $less = 0;
+                $more = 0;
+                
+                foreach (array_column($nilai_matriks, $key) as $key3 => $value3) {
+                    if ($value3 <= $value4[$key3] && $class[$key3] == $key2) $less++;
+                    if ($value3 > $value4[$key3] && $class[$key3] == $key2) $more++;
+                }
+
+                $kontinu_feat_row["less"] = $less;
+                $kontinu_feat_row["more"] = $more;
+                $kontinu_feat_group[$key2] = $kontinu_feat_row;
+                print_r($kontinu_feat_group);
+                dir();
+                // echo $key2;
+            }
+
+            $kontinu_feat_data[$key] = $kontinu_feat_row;
+            // break;
+        }
+        
+        print_r($kontinu_feat_data);
+        die();
+        // ========================================================================= START KONTINU =====================================================================
+        
         // Tabel untuk data categorical
         echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
         foreach ($attribut as $key => $value) {
