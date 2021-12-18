@@ -121,36 +121,45 @@
                             echo "<th style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key2."</th>";
                         }
                         
-                        echo "<th style='padding: 5px 25px; border: 1px solid black;'></th>";
+                        echo "<th style='padding: 5px 25px; background: black'></th>";
                     echo "</tr>";
                 echo "</thead>";
 
                 echo "<tbody>";
                     foreach ($feat_data[$key] as $key3 => $value3) {
                         echo "<tr>";
-                        echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key3."</td>";
+                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$key3."</td>";
 
-                        foreach ($value3 as $key4 => $value4) {
-                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value4."</td>";
-                        }
-                        
+                            foreach ($value3 as $key4 => $value4) {
+                                echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value4."</td>";
+                            }
+
+                            echo "<td style='padding: 5px 25px; background: black'></td>";
                         echo "</tr>";
                     }
 
                     echo "<tr>";
-                    
+                        echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center; font-weight: bold'>Total</td>";
+
+                        $total = 0;
+                        foreach ($value_group_list[$key] as $key5 => $value5) {
+                            echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$value5."</td>";
+                            $total += $value5;
+                        }
+                        
+                        echo "<td style='padding: 5px 25px; border: 1px solid black; text-align: center;'>".$total."</td>";
                     echo "</tr>";
                 echo "</tbody>";
-            echo "<table>";
+            echo "</table>";
 
-            die();
+            echo "<br><br>";
         }
-        
 
-
-
-        
-        echo "</table>";
+        // probability
+        // entropy per group
+        // M atau weight gabungan dari entropy per group
+        // Gain
+        $prob
 
 
 
