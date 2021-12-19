@@ -74,6 +74,7 @@
                 foreach($groupList[$key] as $key3 => $value3){
                     $amount = 0;
                     foreach(array_column($nilai_matriks, $key) as $key4 => $value4){
+                        if (is_numeric($value4)) break 3;
                         if ($value4 == $key3 && $classList[$key4] == $key2) {
                             $amount++;
                         }
@@ -82,12 +83,13 @@
                 }
                 $feat_row[$key2] = $feat_column;
             }
-            array_push($feat_data, $feat_row);
+            if (count($feat_row) > 0) $feat_data[$key] = $feat_row;
         }
 
         $prob= [];
        
         foreach ($attribut as $key => $value){
+            if (!isset($feat_data[$key])) continue;
             $row=[];
             foreach ($feat_data[$key] as $key2 => $value2){
                 $column=[];
