@@ -384,16 +384,31 @@
 
         // Menentukan gain di tiap feature
         $kontinu_gain_list = [];
-        foreach ($weight_list as $key => $value) {
-            $gain_list[$key] = $entropy_parent - $value;
+        foreach ($kontinu_weight_list as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $kontinu_gain_list[$key][$key2] = $entropy_parent - $value2;
+            }
         }
-        arsort($gain_list);
-        
-        die();
+
+        // foreach ($kontinu_gain_list as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        $max_kontinu_gain_list = [];
+        foreach ($kontinu_gain_list as $key => $value) {
+            arsort($value);
+            $max_kontinu_gain_list[$key] = $value[key($value)];
+        }
         // ========================================================================= END KONTINU =====================================================================
         
-        // Tabel untuk data categorical
+        
         echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
+        
+        // Tabel untuk data categorical
         foreach ($attribut as $key => $value) {
             if (!isset($feat_data[$key])) continue;
 
@@ -459,10 +474,64 @@
             echo "</div>";
         }
 
+        // Tabel untuk data kontinu
+        foreach ($data_kontinu_unique as $key => $value) {
+            echo "<div style='margin-right: 40px; margin-bottom: 20px'>";
+                echo "<table style='border: 1px solid black; border-collapse: collapse'>";
+                    echo "<caption>".$attribut[$key]."</caption>";
+                    echo "<thead>";
+                        // Data lama
+                        echo "<tr>";
+                            echo "<th style='padding: 5px 15px; border: 1px solid black; background: black'></th>";
+                            echo "<th style='padding: 5px 15px; border: 1px solid black; background: black'></th>";
+                            foreach ($value as $key2 => $value2) {
+                                echo "<th colspan='2' style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value2."</th>";
+                            }
+                            echo "<th style='padding: 5px 15px; border: 1px solid black; background: black'></th>";
+                        echo "</tr>";
+
+                        // Data baru
+                        echo "<tr>";
+                            echo "<th style='padding: 5px 15px; border: 1px solid black; background: black '></th>";
+                            foreach ($new_data_kontinu[$key] as $key3 => $value3) {
+                                echo "<th colspan='2' style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value3."</th>";
+                            }
+                        echo "</tr>";
+                    echo "</thead>";
+
+                    echo "<tbody>";
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center; background: black'></td>";
+                            
+                            for ($i = 0; $i < count($kontinu_feat_data[$key]); $i++) {
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'><=</td>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>></td>";
+                            }
+                        echo "</tr>";
+
+                        foreach ($parent as $key4 => $value4) {
+                            echo "<tr>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$key4."</td>";
+
+                                foreach ($kontinu_feat_data[$key] as $key5 => $value5) {
+                                    foreach ($value5[$key4] as $key6 => $value6) {
+                                        echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value6."</td>";
+                                    }
+                                }
+                            echo "</tr>";
+                        }
+                        
+                    echo "</tbody>";
+                echo "</table>";
+            echo "</div>";
+        }
+
         echo "</div>";
 
+        
+
         // Hasil
-        echo "<div style='font-size: 18px'>Best split terbaik adalah attribut <b>".$attribut[key($gain_list)]."</b> karena memiliki gain terbesar.</div>";
+        // echo "<div style='font-size: 18px'>Best split terbaik adalah attribut <b>".$attribut[key($gain_list)]."</b> karena memiliki gain terbesar.</div>";
     } else {
         header("location: index.php");
     }
