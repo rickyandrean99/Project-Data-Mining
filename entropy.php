@@ -223,35 +223,174 @@
             $new_data_kontinu[$key] = $new;
         }
 
-        // Feat data
+        // Kontinu feat data
         $kontinu_feat_data = [];
         foreach($new_data_kontinu as $key => $value) {
-            $kontinu_feat_group = [];
-            foreach ($parent as $key2 => $value2) {
-                $kontinu_feat_row = [];
-                $less = 0;
-                $more = 0;
-                
-                foreach (array_column($nilai_matriks, $key) as $key3 => $value3) {
-                    if ($value3 <= $value4[$key3] && $class[$key3] == $key2) $less++;
-                    if ($value3 > $value4[$key3] && $class[$key3] == $key2) $more++;
+            foreach ($value as $key4 => $value4) {
+                $kontinu_feat_group = [];
+
+                foreach ($parent as $key2 => $value2) {
+                    $kontinu_feat_row = [];
+                    $less = 0;
+                    $more = 0;
+
+                    foreach (array_column($nilai_matriks, $key) as $key3 => $value3) {
+                        if ($value3 <= $value4 && $class[$key3] == $key2) $less++;
+                        if ($value3 > $value4 && $class[$key3] == $key2) $more++;
+                    }
+
+                    $kontinu_feat_row["less"] = $less;
+                    $kontinu_feat_row["more"] = $more;
+                    $kontinu_feat_group[$key2] = $kontinu_feat_row;
                 }
 
-                $kontinu_feat_row["less"] = $less;
-                $kontinu_feat_row["more"] = $more;
-                $kontinu_feat_group[$key2] = $kontinu_feat_row;
-                print_r($kontinu_feat_group);
-                dir();
-                // echo $key2;
+                $kontinu_feat_data[$key][$key4] = $kontinu_feat_group;
             }
+        }
 
-            $kontinu_feat_data[$key] = $kontinu_feat_row;
-            // break;
+        // foreach ($kontinu_feat_data as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r("Value ".$new_data_kontinu[$key][$key2].": ");
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        $total_feat_data = [];
+        foreach ($kontinu_feat_data as $key => $value) {
+            $total_data = [];
+
+            foreach ($value as $key2 => $value2) {
+                $total_data[$key2]["less"] = array_sum(array_column($value2, "less"));
+                $total_data[$key2]["more"] = array_sum(array_column($value2, "more"));
+            }
+            
+            $total_feat_data[$key] = $total_data;
         }
         
-        print_r($kontinu_feat_data);
+        // foreach ($total_feat_data as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        // Kontinu prob data
+        $kontinu_prob_feat = [];
+        foreach ($attribut as $key => $value) {
+            if (!isset($kontinu_feat_data[$key])) continue;
+            
+            $kontinu_data = [];
+            foreach ($kontinu_feat_data[$key] as $key2 => $value2) {
+                $kontinu_prob_row = [];
+                
+                foreach ($value2 as $key3 => $value3) {
+                    $kontinu_prob_column = [];
+                    
+                    foreach ($value3 as $key4 => $value4) {
+                        $total = $total_feat_data[$key][$key2][$key4];
+                        if ($total == 0) {
+                            $kontinu_prob_column[$key4] = 0;
+                        } else {
+                            $kontinu_prob_column[$key4] = $value4 / $total;
+                        }
+                    }
+                    
+                    $kontinu_prob_row[$key3] = $kontinu_prob_column;
+                }
+                
+                $kontinu_data[$key2] = $kontinu_prob_row;
+            }
+
+            $kontinu_prob_feat[$key] = $kontinu_data;
+        }
+        
+        // foreach ($kontinu_prob_feat as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        // Menentukan entropy untuk data kontinu di tiap feature
+        $kontinu_entropy_feat = [];
+        foreach ($kontinu_prob_feat as $key => $value) {
+            $entropy_list = [];
+            
+            foreach ($value as $key2 => $value2) {
+                $less = array_column($value2, "less");
+                $more = array_column($value2, "more");
+
+                $entropy_less = 0;
+                $entropy_more = 0;
+                
+                foreach ($less as $key3 => $value3) {
+                    if ($value3 > 0) {
+                        $entropy_less += $value3 * log($value3, 2);
+                    }
+                }
+
+                foreach ($more as $key4 => $value4) {
+                    if ($value4 > 0) {
+                        $entropy_more += $value4 * log($value4, 2);
+                    }
+                }
+
+                $entropy_list[$key2]["less"] = -$entropy_less;
+                $entropy_list[$key2]["more"] = -$entropy_more;
+            }
+            
+            $kontinu_entropy_feat[$key] = $entropy_list;
+        }
+
+        // foreach ($kontinu_entropy_feat as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        // Menentukan weight untuk data kontinu di tiap feature
+        $kontinu_weight_list = [];
+        foreach ($kontinu_entropy_feat as $key => $value) {
+            $kontinu_weight_data = [];
+            
+            foreach ($value as $key2 => $value2) {
+                $weight = 0;
+                $less_amount = $total_feat_data[$key][$key2]["less"];
+                $more_amount = $total_feat_data[$key][$key2]["more"];
+                $amount = array_sum($total_feat_data[$key][$key2]);
+
+                $weight += ($value2["less"] * $less_amount / $amount);
+                $weight += ($value2["more"] * $more_amount / $amount);
+
+                $kontinu_weight_data[$key2] = $weight;
+            }
+
+            $kontinu_weight_list[$key] = $kontinu_weight_data;
+        }
+
+        // foreach ($kontinu_weight_list as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         print_r($value2);
+        //         echo "<br>";
+        //     }
+        //     echo "<br>";
+        // }
+
+        // Menentukan gain di tiap feature
+        $kontinu_gain_list = [];
+        foreach ($weight_list as $key => $value) {
+            $gain_list[$key] = $entropy_parent - $value;
+        }
+        arsort($gain_list);
+        
         die();
-        // ========================================================================= START KONTINU =====================================================================
+        // ========================================================================= END KONTINU =====================================================================
         
         // Tabel untuk data categorical
         echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
