@@ -515,7 +515,7 @@
         echo "</div>";
 
         // Hasil
-        echo "<div style='font-size: 20px; margin-top: 20px'>Best split adalah attribut <b>".$attribut[key($categorical_kontinu_gain_list)]."</b> karena memiliki gain terbesar yaitu ".round($categorical_kontinu_gain_list[key($categorical_kontinu_gain_list)], 3)."</div>";
+        echo "<div style='font-size: 22px; margin-top: 30px; margin-bottom: 50px; text-align: center'>Best split adalah attribut <b>".$attribut[key($categorical_kontinu_gain_list)]."</b> karena memiliki gain terbesar yaitu ".round($categorical_kontinu_gain_list[key($categorical_kontinu_gain_list)], 3)."</div>";
     } else {
         header("location: index.php");
     }

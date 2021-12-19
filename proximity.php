@@ -43,6 +43,14 @@
                 $nilai_matriks = array_chunk($nilai, count($attribut));
             }
         }
+
+        // pastikan semua numerik
+        foreach ($nilai_matriks[0] as $key => $value) {
+            if (!(is_numeric($value))) {
+                echo "<div style='display: flex; width: 100vw; height: 80vh; justify-content: center; align-items: center'><div><h1>Dataset harus berupa nilai numerik!</h1></div><div>";
+                die;
+            }
+        }
         
         // Manhattan Distance
         foreach ($nilai_matriks as $key1 => $value1) {
