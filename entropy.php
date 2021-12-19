@@ -68,16 +68,13 @@
         $entropy_parent = -$entropy_parent;
         
         // ========================================================================= START CATEGORICAL =====================================================================
-        // Pemetaan tabel per feature
         $value_group_list = [];
         for ($i = 0; $i < count($nilai_matriks[0]); $i++) {
             $column_group = array_column($nilai_matriks, $i);
             array_push($value_group_list, array_count_values($column_group));
         }
 
-        // print_r($nilai_matriks);
-        // die();
-
+        // Menghitung feat di tiap feature
         $feat_data = [];
         foreach ($attribut as $key => $value) {
             // ambil key sebagai patokan 0, 1, 2, ... unuk menentukan feat mana yang diproses
@@ -110,10 +107,6 @@
             
             if (count($feat_row) > 0) $feat_data[$key] = $feat_row;
         }
-
-        // UPDATE: FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
-        // print_r($feat_data);
-        // die();
         
         // Menentukan probability di tiap feature
         $prob_feat = [];
@@ -133,10 +126,6 @@
 
             $prob_feat[$key] = $prob_row;
         }
-
-        // UPDATE: PROBABILITY FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
-        // print_r($prob_feat);
-        // die();
 
         // Menentukan entropy di tiap feature
         $entropy_feat = [];
@@ -158,10 +147,6 @@
             $entropy_feat[$key] = $entropy_list;
         }
 
-        // UPDATE: ENTROPY FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
-        // print_r($entropy_feat);
-        // die();
-
         // Menentukan weight di tiap feature
         $weight_list = [];
         foreach ($entropy_feat as $key => $value) {
@@ -173,20 +158,12 @@
             $weight_list[$key] = $weight;
         }
 
-        // UPDATE: WEIGHT FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
-        // print_r($weight_list);
-        // die();
-
         // Menentukan gain di tiap feature
         $gain_list = [];
         foreach ($weight_list as $key => $value) {
             $gain_list[$key] = $entropy_parent - $value;
         }
         arsort($gain_list);
-
-        // UPDATE: GAIN FEAT DATA HANYA TERDIRI DARI DATA CATEGORICAL (NUMERIC SUDAH DIHILANGKAN)
-        // print_r($gain_list);
-        // die();
         // ========================================================================= END CATEGORICAL =====================================================================
 
         // ========================================================================= START KONTINU =====================================================================
@@ -197,7 +174,7 @@
             $data_kontinu[$key] = array_column($nilai_matriks, $key);
         }
 
-        // Membuat data dengan nilai yang sama hanya berjumlah 1 elemen
+        // Mengatasi duplikasi nilai
         $data_kontinu_unique = [];
         foreach ($data_kontinu as $key => $value) {
             asort($value);
@@ -223,7 +200,7 @@
             $new_data_kontinu[$key] = $new;
         }
 
-        // Kontinu feat data
+        // Menghitung feat untuk data kontinu di tiap feature
         $kontinu_feat_data = [];
         foreach($new_data_kontinu as $key => $value) {
             foreach ($value as $key4 => $value4) {
@@ -248,15 +225,7 @@
             }
         }
 
-        // foreach ($kontinu_feat_data as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r("Value ".$new_data_kontinu[$key][$key2].": ");
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
-
+        // Menghitung akumulasi less atau more untuk data kontinu di tiap feature
         $total_feat_data = [];
         foreach ($kontinu_feat_data as $key => $value) {
             $total_data = [];
@@ -268,16 +237,8 @@
             
             $total_feat_data[$key] = $total_data;
         }
-        
-        // foreach ($total_feat_data as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
 
-        // Kontinu prob data
+        // Menentukan probability untuk data kontinu di tiap feature
         $kontinu_prob_feat = [];
         foreach ($attribut as $key => $value) {
             if (!isset($kontinu_feat_data[$key])) continue;
@@ -306,14 +267,6 @@
 
             $kontinu_prob_feat[$key] = $kontinu_data;
         }
-        
-        // foreach ($kontinu_prob_feat as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
 
         // Menentukan entropy untuk data kontinu di tiap feature
         $kontinu_entropy_feat = [];
@@ -339,20 +292,12 @@
                     }
                 }
 
-                $entropy_list[$key2]["less"] = -$entropy_less;
-                $entropy_list[$key2]["more"] = -$entropy_more;
+                $entropy_list[$key2]["less"] = (-$entropy_less == -0)? 0 : -$entropy_less;
+                $entropy_list[$key2]["more"] = (-$entropy_more == -0)? 0 : -$entropy_more;
             }
             
             $kontinu_entropy_feat[$key] = $entropy_list;
         }
-
-        // foreach ($kontinu_entropy_feat as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
 
         // Menentukan weight untuk data kontinu di tiap feature
         $kontinu_weight_list = [];
@@ -374,15 +319,7 @@
             $kontinu_weight_list[$key] = $kontinu_weight_data;
         }
 
-        // foreach ($kontinu_weight_list as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
-
-        // Menentukan gain di tiap feature
+        // Menentukan gain untuk data kontinu di sebuah nilai baru pada feature
         $kontinu_gain_list = [];
         foreach ($kontinu_weight_list as $key => $value) {
             foreach ($value as $key2 => $value2) {
@@ -390,14 +327,7 @@
             }
         }
 
-        // foreach ($kontinu_gain_list as $key => $value) {
-        //     foreach ($value as $key2 => $value2) {
-        //         print_r($value2);
-        //         echo "<br>";
-        //     }
-        //     echo "<br>";
-        // }
-
+        // Menentukan gain untuk data kontinu di sebuah feature
         $max_kontinu_gain_list = [];
         foreach ($kontinu_gain_list as $key => $value) {
             arsort($value);
@@ -405,9 +335,13 @@
         }
         // ========================================================================= END KONTINU =====================================================================
         
+        // Sorting categorical and kontinu gain
+        $categorical_kontinu_gain_list = [];
+        foreach ($gain_list as $key => $value) $categorical_kontinu_gain_list[$key] = $value;
+        foreach ($max_kontinu_gain_list as $key => $value) $categorical_kontinu_gain_list[$key] = $value;
+        arsort($categorical_kontinu_gain_list);
         
-        echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";
-        
+        echo "<div style='display: flex; flex-direction: row; width: 100%; flex-wrap: wrap'>";        
         // Tabel untuk data categorical
         foreach ($attribut as $key => $value) {
             if (!isset($feat_data[$key])) continue;
@@ -493,8 +427,8 @@
                         // Data baru
                         echo "<tr>";
                             echo "<th style='padding: 5px 15px; border: 1px solid black; background: black '></th>";
-                            foreach ($new_data_kontinu[$key] as $key3 => $value3) {
-                                echo "<th colspan='2' style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value3."</th>";
+                            foreach ($new_data_kontinu[$key] as $key2 => $value2) {
+                                echo "<th colspan='2' style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value2."</th>";
                             }
                         echo "</tr>";
                     echo "</thead>";
@@ -509,18 +443,70 @@
                             }
                         echo "</tr>";
 
-                        foreach ($parent as $key4 => $value4) {
+                        foreach ($parent as $key2 => $value4) {
                             echo "<tr>";
-                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$key4."</td>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$key2."</td>";
 
-                                foreach ($kontinu_feat_data[$key] as $key5 => $value5) {
-                                    foreach ($value5[$key4] as $key6 => $value6) {
-                                        echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value6."</td>";
+                                foreach ($kontinu_feat_data[$key] as $key3 => $value3) {
+                                    foreach ($value3[$key2] as $key4 => $value4) {
+                                        echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value4."</td>";
                                     }
                                 }
                             echo "</tr>";
                         }
+
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center; font-weight: bold'>Total</td>";
+
+                            foreach ($total_feat_data[$key] as $key2 => $value2) {
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value2["less"]."</td>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".$value2["more"]."</td>";
+                            }
+                        echo "</tr>";
+
+                        foreach ($parent as $key2 => $value2) {
+                            echo "<tr>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>P(".$key2.")</td>";
+
+                                foreach ($kontinu_prob_feat[$key] as $key3 => $value3) {
+                                    foreach ($value3[$key2] as $key4 => $value4) {
+                                        echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".round($value4, 3)."</td>";
+                                    }
+                                }
+                            echo "</tr>";
+                        }
+
+                        // Entropy
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>Entropy</td>";
+
+                            foreach ($kontinu_entropy_feat[$key] as $key2 => $value2) {
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".round($value2["less"], 3)."</td>";
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>".round($value2["more"], 3)."</td>";
+                            }
+                        echo "</tr>";
+
+                        // Weight
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>Weight</td>";
+
+                            foreach ($kontinu_weight_list[$key] as $key2 => $value2) {
+                                echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;' colspan='2'>".round($value2, 3)."</td>";
+                            }
+                        echo "</tr>";
                         
+                        // Gain
+                        echo "<tr>";
+                            echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;'>Gain</td>";
+
+                            foreach ($kontinu_gain_list[$key] as $key2 => $value2) {
+                                if ($max_kontinu_gain_list[$key] == $value2) {
+                                    echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center; font-weight: bold' colspan='2'>".round($value2, 3)."</td>";
+                                } else {
+                                    echo "<td style='padding: 5px 15px; border: 1px solid black; text-align: center;' colspan='2'>".round($value2, 3)."</td>";
+                                }
+                            }
+                        echo "</tr>";
                     echo "</tbody>";
                 echo "</table>";
             echo "</div>";
@@ -528,10 +514,8 @@
 
         echo "</div>";
 
-        
-
         // Hasil
-        // echo "<div style='font-size: 18px'>Best split terbaik adalah attribut <b>".$attribut[key($gain_list)]."</b> karena memiliki gain terbesar.</div>";
+        echo "<div style='font-size: 20px; margin-top: 20px'>Best split adalah attribut <b>".$attribut[key($categorical_kontinu_gain_list)]."</b> karena memiliki gain terbesar yaitu ".round($categorical_kontinu_gain_list[key($categorical_kontinu_gain_list)], 3)."</div>";
     } else {
         header("location: index.php");
     }
